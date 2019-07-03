@@ -13,9 +13,9 @@ public class DubboSamplerGui extends AbstractSamplerGui {
 		setLayout(new BorderLayout(0, 5));
 		setBorder(makeBorder());
 
-//		add(JMeterPluginsUtils.addHelpLinkToPanel(makeTitlePanel(), WIKIPAGE), BorderLayout.NORTH);
+		add(makeTitlePanel(), BorderLayout.NORTH);
 
-		this.panel = new DubboPanel();
+		panel = new DubboPanel();
 		add(panel.init(), BorderLayout.CENTER);
 		panel.initFields();
 	}
@@ -34,7 +34,6 @@ public class DubboSamplerGui extends AbstractSamplerGui {
 	public TestElement createTestElement() {
 		DubboSampler sampler = new DubboSampler();
 		modifyTestElement(sampler);
-		sampler.setComment("Yajad Dubbo Sampler comment");
 		return sampler;
 	}
 
