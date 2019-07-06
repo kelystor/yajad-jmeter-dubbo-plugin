@@ -6,7 +6,10 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
 public class JsonUtils {
-	private static final Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().serializeNulls().create();
+	private static final Gson gson = new GsonBuilder()
+            .setDateFormat("yyyy-MM-dd HH:mm:ss")
+            .setPrettyPrinting().disableHtmlEscaping().serializeNulls()
+            .create();
 
 	public static String toJson(Object obj) {
         return gson.toJson(obj);
