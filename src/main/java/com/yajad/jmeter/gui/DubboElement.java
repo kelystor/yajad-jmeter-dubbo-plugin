@@ -16,20 +16,20 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class DubboElement implements Serializable {
-    static final String REGISTRY_PROTOCOL = "REGISTRY_PROTOCOL";
-    static final String REGISTRY_ADDRESS = "REGISTRY_ADDRESS";
-    static final String REGISTRY_GROUP = "REGISTRY_GROUP";
-    static final String RPC_PROTOCOL = "RPC_PROTOCOL";
-    static final String SERVICE_TIMEOUT = "SERVICE_TIMEOUT";
-    static final String SERVICE_RETRIES = "SERVICE_RETRIES";
-    static final String SERVICE_VERSION = "SERVICE_VERSION";
-    static final String SERVICE_CLUSTER = "SERVICE_CLUSTER";
-    static final String SERVICE_GROUP = "SERVICE_GROUP";
-    static final String SERVICE_CONNECTIONS = "SERVICE_CONNECTIONS";
-    static final String SERVICE_LOAD_BALANCE = "SERVICE_LOAD_BALANCE";
-    static final String SERVICE_INTERFACE = "SERVICE_INTERFACE";
-    static final String SERVICE_METHOD = "SERVICE_METHOD";
-    static final String SERVICE_PARAMETER = "SERVICE_PARAMETER";
+    static final String REGISTRY_PROTOCOL = "Yajad.registryProtocol";
+    static final String REGISTRY_ADDRESS = "Yajad.registryAddress";
+    static final String REGISTRY_GROUP = "Yajad.registryGroup";
+    static final String RPC_PROTOCOL = "Yajad.rpcProtocol";
+    static final String SERVICE_TIMEOUT = "Yajad.serviceTimeout";
+    static final String SERVICE_RETRIES = "Yajad.serviceRetries";
+    static final String SERVICE_VERSION = "Yajad.serviceVersion";
+    static final String SERVICE_CLUSTER = "Yajad.serviceCluster";
+    static final String SERVICE_GROUP = "Yajad.serviceGroup";
+    static final String SERVICE_CONNECTIONS = "Yajad.serviceConnections";
+    static final String SERVICE_LOAD_BALANCE = "Yajad.serviceLoadBalance";
+    static final String SERVICE_INTERFACE = "Yajad.serviceInterface";
+    static final String SERVICE_METHOD = "Yajad.serviceMethod";
+    static final String SERVICE_PARAMETER = "Yajad.serviceParameter";
     private AbstractTestElement model;
 
     public DubboElement(AbstractTestElement model) {
@@ -58,7 +58,6 @@ public class DubboElement implements Serializable {
         ReferenceConfig reference = new ReferenceConfig();
         reference.setApplication(application);
 
-        // direct invoke provider
         if ("none".equalsIgnoreCase(getRegistryProtocol())) {
             reference.setUrl(getRpcProtocol() + "://" + getRegistryAddress() + "/" + getServiceInterface());
         } else {
@@ -106,9 +105,6 @@ public class DubboElement implements Serializable {
         sampleResult.setResponseData(JsonUtils.toJson(result), StandardCharsets.UTF_8.name());
     }
 
-    /**
-     * Construct request data
-     */
     private String getSampleData() {
         return "Registry Protocol: " + getRegistryProtocol() + "\n" +
                 "Registry Address: " + getRegistryAddress() + "\n" +
@@ -130,116 +126,56 @@ public class DubboElement implements Serializable {
         return getPropertyAsString(REGISTRY_PROTOCOL);
     }
 
-    void setRegistryProtocol(String text) {
-        setProperty(REGISTRY_PROTOCOL, text);
-    }
-
     private String getRegistryAddress() {
         return getPropertyAsString(REGISTRY_ADDRESS, "zookeeper");
-    }
-
-    void setRegistryAddress(String text) {
-        setProperty(REGISTRY_ADDRESS, text);
     }
 
     private String getRegistryGroup() {
         return getPropertyAsString(REGISTRY_GROUP, "");
     }
 
-    void setRegistryGroup(String text) {
-        setProperty(REGISTRY_GROUP, text);
-    }
-
     private String getRpcProtocol() {
         return getPropertyAsString(RPC_PROTOCOL, "dubbo");
-    }
-
-    void setRpcProtocol(String text) {
-        setProperty(RPC_PROTOCOL, text);
     }
 
     private int getServiceTimeout() {
         return getPropertyAsInteger(SERVICE_TIMEOUT, 120000);
     }
 
-    void setServiceTimeout(String text) {
-        setProperty(SERVICE_TIMEOUT, text);
-    }
-
     private int getServiceRetries() {
         return getPropertyAsInteger(SERVICE_RETRIES, 0);
-    }
-
-    void setServiceRetries(String text) {
-        setProperty(SERVICE_RETRIES, text);
     }
 
     private String getServiceVersion() {
         return getPropertyAsString(SERVICE_VERSION, "");
     }
 
-    void setServiceVersion(String text) {
-        setProperty(SERVICE_VERSION, text);
-    }
-
     private String getServiceCluster() {
         return getPropertyAsString(SERVICE_CLUSTER, "failfast");
-    }
-
-    void setServiceCluster(String text) {
-        setProperty(SERVICE_CLUSTER, text);
     }
 
     private String getServiceGroup() {
         return getPropertyAsString(SERVICE_GROUP, "");
     }
 
-    void setServiceGroup(String text) {
-        setProperty(SERVICE_GROUP, text);
-    }
-
     private Integer getServiceConnections() {
         return getPropertyAsInteger(SERVICE_CONNECTIONS, 100);
-    }
-
-    void setServiceConnections(String text) {
-        setProperty(SERVICE_CONNECTIONS, text);
     }
 
     private String getServiceLoadBalance() {
         return getPropertyAsString(SERVICE_LOAD_BALANCE, "random");
     }
 
-    void setServiceLoadBalance(String text) {
-        setProperty(SERVICE_LOAD_BALANCE, text);
-    }
-
     private String getServiceInterface() {
         return getPropertyAsString(SERVICE_INTERFACE);
-    }
-
-    void setServiceInterface(String text) {
-        setProperty(SERVICE_INTERFACE, text);
     }
 
     private String getServiceMethod() {
         return getPropertyAsString(SERVICE_METHOD);
     }
 
-    void setServiceMethod(String text) {
-        setProperty(SERVICE_METHOD, text);
-    }
-
     private String getServiceParameter() {
         return getPropertyAsString(SERVICE_PARAMETER);
-    }
-
-    void setServiceParameter(String text) {
-        setProperty(SERVICE_PARAMETER, text);
-    }
-
-    private void setProperty(String key, String val) {
-        model.setProperty(key, val);
     }
 
     private String getPropertyAsString(String key) {

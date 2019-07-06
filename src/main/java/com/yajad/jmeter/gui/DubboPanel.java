@@ -1,6 +1,5 @@
 package com.yajad.jmeter.gui;
 
-import com.yajad.jmeter.sampler.DubboSampler;
 import com.yajad.jmeter.util.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jmeter.gui.util.VerticalPanel;
@@ -16,84 +15,48 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Objects;
 
 public class DubboPanel extends JPanel {
-	private JComboBox<String> registryProtocol;
-	private JTextField registryAddress;
-	private JTextField registryGroup;
-	private JComboBox<String> rpcProtocol;
-	private JTextField serviceTimeout;
-	private JTextField serviceRetries;
-	private JTextField serviceVersion;
-	private JComboBox<String> serviceCluster;
-	private JTextField serviceGroup;
-	private JTextField serviceConnections;
-	private JComboBox<String> serviceLoadBalance;
-	private JTextField serviceInterface;
-	private JTextField serviceMethod;
-	private JTextArea serviceParameter;
+    private DubboCommonPanel commonPanel = new DubboCommonPanel();
+    private JTextField serviceInterface;
+    private JTextField serviceMethod;
+    private JTextArea serviceParameter;
 
-	public DubboPanel() {
-		super(new GridBagLayout());
-	}
+    public JPanel init() {
+        JPanel container = new VerticalPanel(5, 0);
 
-	public void initFields() {
-		registryProtocol.setSelectedItem("zookeeper");
-		registryAddress.setText("${dubboRegistryAddress}");
-		registryGroup.setText("");
-		rpcProtocol.setSelectedItem("dubbo");
-		serviceTimeout.setText("120000");
-		serviceRetries.setText("0");
-		serviceVersion.setText("");
-		serviceCluster.setSelectedItem("failfast");
-		serviceGroup.setText("");
-		serviceConnections.setText("100");
-		serviceLoadBalance.setSelectedItem("random");
-		serviceInterface.setText("");
-		serviceMethod.setText("");
-		serviceParameter.setText("");
-	}
+        container.add(commonPanel.makeRegistryPanel());
+        container.add(commonPanel.makeServicePanel());
+        container.add(makeParameterPanel());
 
-	public JPanel init() {
-		JPanel container = new VerticalPanel(5, 0);
+        clearFields();
 
-		JPanel registryPanel = new JPanel();
-		registryPanel.setLayout(new WrapLayout(FlowLayout.LEADING,5,5));
-		registryPanel.setBorder(BorderFactory.createTitledBorder("Registry"));
+        return container;
+    }
 
-		registryPanel.add(new JLabel("Protocol: ", JLabel.RIGHT));
-		registryPanel.add(registryProtocol = new JComboBox<>(new String[]{"zookeeper", "none", "multicast", "redis", "simple"}));
-		registryPanel.add(new JLabel("Address: ", JLabel.RIGHT));
-		registryPanel.add(registryAddress = new JTextField(20));
-		registryPanel.add(new JLabel("Group: ", JLabel.RIGHT));
-		registryPanel.add(registryGroup = new JTextField(6));
+    public void clearFields() {
+        commonPanel.clearFields();
 
-		container.add(registryPanel);
+        serviceInterface.setText("");
+        serviceMethod.setText("");
+        serviceParameter.setText("");
+    }
 
-		JPanel servicePanel = new JPanel();
-		servicePanel.setLayout(new WrapLayout(FlowLayout.LEADING,5,5));
-		servicePanel.setBorder(BorderFactory.createTitledBorder("Service"));
+    public void configure(TestElement testElement) {
+        commonPanel.configure(testElement);
+        serviceInterface.setText(testElement.getPropertyAsString(DubboElement.SERVICE_INTERFACE));
+        serviceMethod.setText(testElement.getPropertyAsString(DubboElement.SERVICE_METHOD));
+        serviceParameter.setText(testElement.getPropertyAsString(DubboElement.SERVICE_PARAMETER));
+    }
 
-		servicePanel.add(new JLabel("Protocol: ", JLabel.RIGHT));
-		servicePanel.add(rpcProtocol = new JComboBox<>(new String[]{"dubbo"}));
-		servicePanel.add(new JLabel("Timeout (milliseconds): ", JLabel.RIGHT));
-		servicePanel.add(serviceTimeout = new JTextField(6));
-		servicePanel.add(new JLabel("Retries: ", JLabel.RIGHT));
-		servicePanel.add(serviceRetries = new JTextField(6));
-		servicePanel.add(new JLabel("Version: ", JLabel.RIGHT));
-		servicePanel.add(serviceVersion = new JTextField(6));
-		servicePanel.add(new JLabel("Cluster: ", JLabel.RIGHT));
-		servicePanel.add(serviceCluster = new JComboBox<>(new String[]{"failover", "failsafe", "failfast", "failback", "forking"}));
-		servicePanel.add(new JLabel("Group: ", JLabel.RIGHT));
-		servicePanel.add(serviceGroup = new JTextField(6));
-		servicePanel.add(new JLabel("Connections: ", JLabel.RIGHT));
-		servicePanel.add(serviceConnections = new JTextField(6));
-		servicePanel.add(new JLabel("Load Balance: ", JLabel.RIGHT));
-		servicePanel.add(serviceLoadBalance = new JComboBox<>(new String[]{"random", "roundrobin", "leastactive", "consistenthash"}));
+    public void modifyTestElement(TestElement testElement) {
+        commonPanel.modifyTestElement(testElement);
+        testElement.setProperty(DubboElement.SERVICE_INTERFACE, serviceInterface.getText());
+        testElement.setProperty(DubboElement.SERVICE_METHOD, serviceMethod.getText());
+        testElement.setProperty(DubboElement.SERVICE_PARAMETER, serviceParameter.getText());
+    }
 
-        container.add(servicePanel);
-
+    private JPanel makeParameterPanel() {
         JPanel gridPanel = new JPanel(new GridBagLayout());
 
         GridBagConstraints labelConstraints = new GridBagConstraints();
@@ -104,12 +67,12 @@ public class DubboPanel extends JPanel {
         editConstraints.weightx = 1.0;
         editConstraints.fill = GridBagConstraints.HORIZONTAL;
 
-        addToPanel(gridPanel, labelConstraints, 0, 0, new JLabel("Interface: ", JLabel.RIGHT));
+        addToPanel(gridPanel, labelConstraints, 0, 0, new JLabel("Interface: "));
         addToPanel(gridPanel, editConstraints, 1, 0, serviceInterface = new JTextField(20));
-        addToPanel(gridPanel, labelConstraints, 0, 1, new JLabel("Method: ", JLabel.RIGHT));
+        addToPanel(gridPanel, labelConstraints, 0, 1, new JLabel("Method: "));
         addToPanel(gridPanel, editConstraints, 1, 1, serviceMethod = new JTextField(20));
 
-        addToPanel(gridPanel, labelConstraints, 0, 2, new JLabel("Parameter (yaml): ", JLabel.RIGHT));
+        addToPanel(gridPanel, labelConstraints, 0, 2, new JLabel("Parameter (yaml): "));
         editConstraints.fill = GridBagConstraints.BOTH;
         serviceParameter = new JTextArea();
         addToPanel(gridPanel, editConstraints, 1, 2, createTextAreaScrollPaneContainer(serviceParameter));
@@ -139,7 +102,7 @@ public class DubboPanel extends JPanel {
         });
         addToPanel(gridPanel, buttonConstraints, 1, 3, button);
 
-        JLabel link = new JLabel("YAJAD JMeter Apache Dubbo Plugin", JLabel.RIGHT);
+        JLabel link = new JLabel("YAJAD JMeter Apache Dubbo Plugin");
         link.setForeground(Color.blue);
         link.setFont(link.getFont().deriveFont(Font.PLAIN));
         link.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -158,59 +121,22 @@ public class DubboPanel extends JPanel {
         link.setBorder(border);
 
         addToPanel(gridPanel, labelConstraints, 1, 3, link);
-        addToPanel(gridPanel, labelConstraints, 1, 4, new JLabel("Powered by 小龙虾", JLabel.RIGHT));
+        addToPanel(gridPanel, labelConstraints, 1, 4, new JLabel("Powered by 小龙虾"));
 
-        container.add(gridPanel);
+        return gridPanel;
+    }
 
-		return container;
-	}
+    private void addToPanel(JPanel panel, GridBagConstraints constraints, int col, int row, JComponent component) {
+        constraints.gridx = col;
+        constraints.gridy = row;
+        panel.add(component, constraints);
+    }
 
-	public void configure(TestElement element) {
-		registryProtocol.setSelectedItem(element.getPropertyAsString(DubboElement.REGISTRY_PROTOCOL));
-		registryAddress.setText(element.getPropertyAsString(DubboElement.REGISTRY_ADDRESS));
-		registryGroup.setText(element.getPropertyAsString(DubboElement.REGISTRY_GROUP));
-		rpcProtocol.setSelectedItem(element.getPropertyAsString(DubboElement.RPC_PROTOCOL));
-		serviceTimeout.setText(element.getPropertyAsString(DubboElement.SERVICE_TIMEOUT));
-		serviceRetries.setText(element.getPropertyAsString(DubboElement.SERVICE_RETRIES));
-		serviceVersion.setText(element.getPropertyAsString(DubboElement.SERVICE_VERSION));
-		serviceCluster.setSelectedItem(element.getPropertyAsString(DubboElement.SERVICE_CLUSTER));
-		serviceGroup.setText(element.getPropertyAsString(DubboElement.SERVICE_GROUP));
-		serviceConnections.setText(element.getPropertyAsString(DubboElement.SERVICE_CONNECTIONS));
-		serviceLoadBalance.setSelectedItem(element.getPropertyAsString(DubboElement.SERVICE_LOAD_BALANCE));
-		serviceInterface.setText(element.getPropertyAsString(DubboElement.SERVICE_INTERFACE));
-		serviceMethod.setText(element.getPropertyAsString(DubboElement.SERVICE_METHOD));
-		serviceParameter.setText(element.getPropertyAsString(DubboElement.SERVICE_PARAMETER));
-	}
-
-	public void modifyTestElement(TestElement te) {
-		DubboElement dubboElement = ((DubboSampler) te).getElement();
-		dubboElement.setRegistryProtocol(Objects.requireNonNull(registryProtocol.getSelectedItem()).toString());
-		dubboElement.setRegistryAddress(registryAddress.getText());
-		dubboElement.setRegistryGroup(registryGroup.getText());
-		dubboElement.setRpcProtocol(Objects.requireNonNull(rpcProtocol.getSelectedItem()).toString());
-		dubboElement.setServiceTimeout(serviceTimeout.getText());
-		dubboElement.setServiceRetries(serviceRetries.getText());
-		dubboElement.setServiceVersion(serviceVersion.getText());
-		dubboElement.setServiceCluster(Objects.requireNonNull(serviceCluster.getSelectedItem()).toString());
-		dubboElement.setServiceGroup(serviceGroup.getText());
-		dubboElement.setServiceConnections(serviceConnections.getText());
-		dubboElement.setServiceLoadBalance(Objects.requireNonNull(serviceLoadBalance.getSelectedItem()).toString());
-		dubboElement.setServiceInterface(serviceInterface.getText());
-		dubboElement.setServiceMethod(serviceMethod.getText());
-		dubboElement.setServiceParameter(serviceParameter.getText());
-	}
-
-	private void addToPanel(JPanel panel, GridBagConstraints constraints, int col, int row, JComponent component) {
-		constraints.gridx = col;
-		constraints.gridy = row;
-		panel.add(component, constraints);
-	}
-
-	private JScrollPane createTextAreaScrollPaneContainer(JTextArea textArea) {
-		JScrollPane ret = new JScrollPane();
-		textArea.setRows(16);
-		textArea.setColumns(20);
-		ret.setViewportView(textArea);
-		return ret;
-	}
+    private JScrollPane createTextAreaScrollPaneContainer(JTextArea textArea) {
+        JScrollPane ret = new JScrollPane();
+        textArea.setRows(16);
+        textArea.setColumns(20);
+        ret.setViewportView(textArea);
+        return ret;
+    }
 }

@@ -23,9 +23,4 @@ public class DubboSampler extends AbstractSampler implements Interruptible {
 	public SampleResult sample(Entry e) {
 		return element.sample();
 	}
-
-	public DubboElement getElement() {
-		return element;
-	}
-
 }

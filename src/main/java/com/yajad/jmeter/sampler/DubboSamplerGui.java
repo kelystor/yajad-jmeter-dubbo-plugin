@@ -17,7 +17,6 @@ public class DubboSamplerGui extends AbstractSamplerGui {
 
 		panel = new DubboPanel();
 		add(panel.init(), BorderLayout.CENTER);
-		panel.initFields();
 	}
 
 	@Override
@@ -49,9 +48,9 @@ public class DubboSamplerGui extends AbstractSamplerGui {
 		panel.modifyTestElement(testElement);
 	}
 
-	@Override
-	public void clearGui() {
-		super.clearGui();
-		panel.initFields();
-	}
+    @Override
+    public void clearGui() {
+        super.clearGui();
+        panel.clearFields();
+    }
 }
