@@ -3,7 +3,6 @@ package com.yajad.jmeter.gui;
 import com.alibaba.dubbo.config.ApplicationConfig;
 import com.alibaba.dubbo.config.ReferenceConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
-import com.alibaba.dubbo.rpc.service.GenericService;
 import com.yajad.jmeter.dto.DubboParamDto;
 import com.yajad.jmeter.parse.YamlParamParser;
 import com.yajad.jmeter.util.JsonUtils;
@@ -11,6 +10,7 @@ import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jmeter.testelement.AbstractTestElement;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -49,6 +49,7 @@ public class DubboElement implements Serializable {
         return sampleResult;
     }
 
+    @SuppressWarnings("deprecation")
     private void dubboInvoke(SampleResult sampleResult) {
         DubboParamDto parameters = YamlParamParser.parseParameter(getServiceParameter());
 
@@ -80,7 +81,7 @@ public class DubboElement implements Serializable {
         reference.setGeneric(true);
         reference.setInterface(getServiceInterface());
 
-        GenericService genericService = (GenericService) reference.get();
+        Object genericService = reference.get();
 
         String[] parameterTypes = parameters.getTypes().toArray(new String[]{});
         Object[] parameterValues = parameters.getValues().toArray();
@@ -96,7 +97,18 @@ public class DubboElement implements Serializable {
         sampleResult.sampleStart();
         Object result;
         try {
-            result = genericService.$invoke(getServiceMethod(), parameterTypes, parameterValues);
+            Method method = genericService.getClass().getMethod("$invoke", String.class, String[].class, Object[].class);
+            // 以下写法是兼容dubbo版本
+            // 如果写成
+            // genericService.$invoke(getServiceMethod(), parameterTypes, parameterValues);
+            // 会报错：
+            // java.lang.ClassCastException: org.apache.dubbo.common.bytecode.proxy0 cannot be cast to com.alibaba.dubbo.rpc.service.GenericService
+            // dubbo 2.7.X虽然做了兼容处理，但生成的genericService是新版本的
+            // 参见 org.apache.dubbo.config.ReferenceConfig 中的代码：
+            // if (ProtocolUtils.isGeneric(this.getGeneric())) {
+            //   this.interfaceClass = GenericService.class;
+            // }
+            result = method.invoke(genericService, getServiceMethod(), parameterTypes, parameterValues);
             sampleResult.setSuccessful(true);
         } catch (Exception e) {
             sampleResult.setSuccessful(true);
