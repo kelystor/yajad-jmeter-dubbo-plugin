@@ -97,7 +97,7 @@ public class DubboCommonPanel {
         servicePanel.setBorder(BorderFactory.createTitledBorder("Service"));
 
         servicePanel.add(new JLabel("Protocol: "));
-        servicePanel.add(rpcProtocol = new JComboBox<>(new String[]{"", "dubbo", "rmi", "hessian", "webservice", "memcached", "redis"}));
+        servicePanel.add(rpcProtocol = new JComboBox<>(new String[]{"", "dubbo", "rmi", "hessian", "http", "webservice", "thrift", "memcached", "redis", "rest"}));
         servicePanel.add(serviceTimeout = new JLabeledTextField("Timeout (milliseconds): ", 6));
         servicePanel.add(serviceRetries = new JLabeledTextField("Retries: ", 6));
         servicePanel.add(serviceVersion = new JLabeledTextField("Version: ", 6));
