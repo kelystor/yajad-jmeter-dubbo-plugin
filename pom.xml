@@ -18,7 +18,7 @@
 
         <dubbo_version>2.6.4</dubbo_version>
         <jmeter_core_version>5.0</jmeter_core_version>
-        <zookeeper_version>3.4.9</zookeeper_version>
+        <zookeeper_version>3.4.14</zookeeper_version>
         <zkclient_version>0.2</zkclient_version>
         <curator_version>2.12.0</curator_version>
         <snakeyaml_version>1.0</snakeyaml_version>
