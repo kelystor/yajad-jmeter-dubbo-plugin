@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class DubboPanel extends JPanel {
+public class DubboPanel {
     private DubboCommonPanel commonPanel = new DubboCommonPanel();
     private JTextField serviceInterface;
     private JTextField serviceMethod;
@@ -84,11 +84,11 @@ public class DubboPanel extends JPanel {
         button.addActionListener(e -> {
             String parameter = serviceParameter.getText();
             if (StringUtils.isBlank(parameter)) {
-                JOptionPane.showMessageDialog(this.getParent(), "parameter is empty", "error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(gridPanel.getParent(), "parameter is empty", "error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             if (!JsonUtils.validate(parameter)) {
-                JOptionPane.showMessageDialog(this.getParent(), "invalid json", "error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(gridPanel.getParent(), "invalid json", "error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
