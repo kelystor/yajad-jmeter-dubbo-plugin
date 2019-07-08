@@ -52,6 +52,16 @@ public class DubboElement implements Serializable {
     @SuppressWarnings("deprecation")
     private void dubboInvoke(SampleResult sampleResult) {
         DubboParamDto parameters = YamlParamParser.parseParameter(getServiceParameter());
+        String[] parameterTypes = parameters.getTypes().toArray(new String[]{});
+        Object[] parameterValues = parameters.getValues().toArray();
+
+        String samplerData = getSampleData();
+        samplerData += "parameterTypes: " + Arrays.toString(parameterTypes) + "\n";
+        samplerData += "parameterValues: " + Arrays.toString(parameterValues) + "\n";
+        samplerData += "parameterClasses: " + Arrays.stream(parameterValues)
+                .map(value -> value.getClass().getName())
+                .collect(Collectors.toList());
+        sampleResult.setSamplerData(samplerData);
 
         ApplicationConfig application = new ApplicationConfig();
         application.setName("Yajad-Dubbo-Sample");
@@ -81,24 +91,22 @@ public class DubboElement implements Serializable {
         reference.setGeneric(true);
         reference.setInterface(getServiceInterface());
 
-        Object genericService = reference.get();
-
-        String[] parameterTypes = parameters.getTypes().toArray(new String[]{});
-        Object[] parameterValues = parameters.getValues().toArray();
-
-        String samplerData = getSampleData();
-        samplerData += "parameterTypes: " + Arrays.toString(parameterTypes) + "\n";
-        samplerData += "parameterValues: " + Arrays.toString(parameterValues) + "\n";
-        samplerData += "parameterClasses: " + Arrays.stream(parameterValues)
-                .map(value -> value.getClass().getName())
-                .collect(Collectors.toList());
-        sampleResult.setSamplerData(samplerData);
+        Object genericService;
+        try {
+//            ReferenceConfigCache cache = ReferenceConfigCache.getCache(getRegistryAddress());
+//            genericService = cache.get(reference);
+            genericService = reference.get();
+        } catch (Exception e) {
+            sampleResult.setSuccessful(false);
+            sampleResult.setResponseData(JsonUtils.toJson(e), StandardCharsets.UTF_8.name());
+            return;
+        }
 
         sampleResult.sampleStart();
         Object result;
         try {
             Method method = genericService.getClass().getMethod("$invoke", String.class, String[].class, Object[].class);
-            // 以下写法是兼容dubbo版本
+            // 以下写法是兼容dubbo版本（仅仅是编译打包兼容，比如对于dubbox这类变种版本，可以去除apache dubbo依赖，而引入dubbox依赖直接重新编译打包，以获得兼容版本的插件）
             // 如果写成
             // genericService.$invoke(getServiceMethod(), parameterTypes, parameterValues);
             // 会报错：
@@ -111,8 +119,8 @@ public class DubboElement implements Serializable {
             result = method.invoke(genericService, getServiceMethod(), parameterTypes, parameterValues);
             sampleResult.setSuccessful(true);
         } catch (Exception e) {
-            sampleResult.setSuccessful(true);
             result = e;
+            sampleResult.setSuccessful(true);
         }
         sampleResult.setResponseData(JsonUtils.toJson(result), StandardCharsets.UTF_8.name());
     }
