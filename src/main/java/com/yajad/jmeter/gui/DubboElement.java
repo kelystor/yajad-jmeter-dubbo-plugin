@@ -1,8 +1,10 @@
 package com.yajad.jmeter.gui;
 
-import com.alibaba.dubbo.config.ApplicationConfig;
-import com.alibaba.dubbo.config.ReferenceConfig;
-import com.alibaba.dubbo.config.RegistryConfig;
+import com.yajad.dubbo.config.ApplicationConfig;
+import com.yajad.dubbo.config.ReferenceConfig;
+import com.yajad.dubbo.config.RegistryConfig;
+import com.yajad.dubbo.invoker.DubboInvoker;
+import com.yajad.dubbo.invoker.DubboInvokerFactory;
 import com.yajad.jmeter.dto.DubboParamDto;
 import com.yajad.jmeter.parse.YamlParamParser;
 import com.yajad.jmeter.util.JsonUtils;
@@ -10,7 +12,6 @@ import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jmeter.testelement.AbstractTestElement;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -69,14 +70,14 @@ public class DubboElement implements Serializable {
         ReferenceConfig reference = new ReferenceConfig();
         reference.setApplication(application);
 
+        RegistryConfig registry = new RegistryConfig();
+        registry.setProtocol(getRegistryProtocol());
+        registry.setGroup(getRegistryGroup());
+        registry.setAddress(getRegistryAddress());
+        reference.setRegistry(registry);
+
         if ("none".equalsIgnoreCase(getRegistryProtocol())) {
             reference.setUrl(getRpcProtocol() + "://" + getRegistryAddress() + "/" + getServiceInterface());
-        } else {
-            RegistryConfig registry = new RegistryConfig();
-            registry.setProtocol(getRegistryProtocol());
-            registry.setGroup(getRegistryGroup());
-            registry.setAddress(getRegistryAddress());
-            reference.setRegistry(registry);
         }
 
         reference.setProtocol(getRpcProtocol());
@@ -86,16 +87,14 @@ public class DubboElement implements Serializable {
         reference.setCluster(getServiceCluster());
         reference.setGroup(getServiceGroup());
         reference.setConnections(getServiceConnections());
-        reference.setLoadbalance(getServiceLoadBalance());
+        reference.setLoadBalance(getServiceLoadBalance());
 
         reference.setGeneric(true);
         reference.setInterface(getServiceInterface());
 
-        Object genericService;
+        DubboInvoker dubboInvoker = DubboInvokerFactory.get();
         try {
-//            ReferenceConfigCache cache = ReferenceConfigCache.getCache(getRegistryAddress());
-//            genericService = cache.get(reference);
-            genericService = reference.get();
+            dubboInvoker.config(reference);
         } catch (Exception e) {
             sampleResult.setSuccessful(false);
             sampleResult.setResponseData(JsonUtils.toJson(e), StandardCharsets.UTF_8.name());
@@ -105,18 +104,7 @@ public class DubboElement implements Serializable {
         sampleResult.sampleStart();
         Object result;
         try {
-            Method method = genericService.getClass().getMethod("$invoke", String.class, String[].class, Object[].class);
-            // 以下写法是兼容dubbo版本（仅仅是编译打包兼容，比如对于dubbox这类变种版本，可以去除apache dubbo依赖，而引入dubbox依赖直接重新编译打包，以获得兼容版本的插件）
-            // 如果写成
-            // genericService.$invoke(getServiceMethod(), parameterTypes, parameterValues);
-            // 会报错：
-            // java.lang.ClassCastException: org.apache.dubbo.common.bytecode.proxy0 cannot be cast to com.alibaba.dubbo.rpc.service.GenericService
-            // dubbo 2.7.X虽然做了兼容处理，但生成的genericService是新版本的
-            // 参见 org.apache.dubbo.config.ReferenceConfig 中的代码：
-            // if (ProtocolUtils.isGeneric(this.getGeneric())) {
-            //   this.interfaceClass = GenericService.class;
-            // }
-            result = method.invoke(genericService, getServiceMethod(), parameterTypes, parameterValues);
+            result = dubboInvoker.$invoke(getServiceMethod(), parameterTypes, parameterValues);
             sampleResult.setSuccessful(true);
         } catch (Exception e) {
             result = e;
