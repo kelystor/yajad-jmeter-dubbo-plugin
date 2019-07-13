@@ -2,6 +2,7 @@ package com.yajad.jmeter.parse;
 
 import com.yajad.jmeter.dto.DubboParamDto;
 import com.yajad.yaml.resolver.YajadResolver;
+import com.yajad.yaml.type.YajadType;
 import org.apache.commons.lang3.StringUtils;
 import org.snakeyaml.engine.v1.api.Load;
 import org.snakeyaml.engine.v1.api.LoadSettings;
@@ -13,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 public class YamlParamParser {
-
     @SuppressWarnings("unchecked")
     public static DubboParamDto parseParameter(String yaml) {
         if (StringUtils.isBlank(yaml)) {
@@ -52,13 +52,18 @@ public class YamlParamParser {
             // 列表项有Map的
             for (Object object : (List<Object>) params) {
                 Object value = object;
+                String typeName;
                 if (object instanceof Map) {
                     Map.Entry<String, Object> entry = ((Map<String, Object>) object).entrySet().iterator().next();
                     value = entry.getValue();
-                    dubboParamTypes.add(entry.getKey());
+                    typeName = entry.getKey();
                 } else {
-                    dubboParamTypes.add(value.getClass().getName());
+                    typeName = value.getClass().getName();
                 }
+                if (YajadType.isArray(typeName)) {
+                    value = YajadType.parseArrayObject((List<?>) value, typeName);
+                }
+                dubboParamTypes.add(YajadType.normalizerClassName(typeName));
                 dubboParamValues.add(value);
             }
         }

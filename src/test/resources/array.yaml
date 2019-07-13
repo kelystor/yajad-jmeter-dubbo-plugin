@@ -1,0 +1,15 @@
+- int[]: [1,2,3]
+- Number[]: [1,2,3]
+- !!int[] [1,2,3]
+- !!java.math.BigDecimal[]
+  - !!java.math.BigDecimal 1.1
+  - !!java.math.BigDecimal 2.2
+  - !!java.math.BigDecimal 3.3
+-
+  - 1
+  - 2
+  - 3
+-
+  - !!java.math.BigDecimal 1
+  - !!java.math.BigDecimal 2
+  - !!java.math.BigDecimal 3

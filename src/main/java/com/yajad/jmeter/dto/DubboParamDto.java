@@ -18,4 +18,12 @@ public class DubboParamDto {
     public List<Object> getValues() {
         return values;
     }
+
+    @Override
+    public String toString() {
+        return "DubboParamDto{" +
+                "types=" + types +
+                ", values=" + values +
+                '}';
+    }
 }
