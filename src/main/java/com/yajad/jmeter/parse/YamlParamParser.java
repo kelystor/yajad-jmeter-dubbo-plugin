@@ -2,6 +2,7 @@ package com.yajad.jmeter.parse;
 
 import com.yajad.jmeter.dto.DubboParamDto;
 import com.yajad.yaml.resolver.YajadResolver;
+import org.apache.commons.lang3.StringUtils;
 import org.snakeyaml.engine.v1.api.Load;
 import org.snakeyaml.engine.v1.api.LoadSettings;
 import org.snakeyaml.engine.v1.api.LoadSettingsBuilder;
@@ -15,6 +16,10 @@ public class YamlParamParser {
 
     @SuppressWarnings("unchecked")
     public static DubboParamDto parseParameter(String yaml) {
+        if (StringUtils.isBlank(yaml)) {
+            return new DubboParamDto(new ArrayList<>(), new ArrayList<>());
+        }
+
         LoadSettings settings = new LoadSettingsBuilder().setScalarResolver(new YajadResolver()).build();
         Load load = new Load(settings, new YajadConstructor(settings));
         Object params = load.loadFromString(yaml);
