@@ -10,6 +10,7 @@ import org.snakeyaml.engine.v1.api.LoadSettingsBuilder;
 import org.snakeyaml.engine.v1.constructor.YajadConstructor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,11 +36,15 @@ public class YamlParamParser {
             //            c: 1
             //            d: 2
             // 纯Map项
+            List<Object> paramList = new ArrayList<>();
             for (Map.Entry<String, Object> entry : ((Map<String, Object>) params).entrySet()) {
-                dubboParamTypes.add(entry.getKey());
-                dubboParamValues.add(entry.getValue());
+                Map<String, Object> map = new HashMap<>();
+                map.put(entry.getKey(), entry.getValue());
+                paramList.add(map);
             }
-        } else if (params instanceof List) {
+            params = paramList;
+        }
+        if (params instanceof List) {
             //        - com.xx.param1:
             //            a: 1
             //            b: 2
