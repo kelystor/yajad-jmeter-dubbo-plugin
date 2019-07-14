@@ -12,11 +12,11 @@ public class YamlArrayTest {
         DubboParamDto dubboParamDto = YamlParamParser.parseParameter(yaml);
 
         Integer[] integerArray = new Integer[]{1, 2, 3};
-        Assert.assertEquals(toArrayType(Integer.class), dubboParamDto.getTypes().get(0));
+        Assert.assertEquals(Integer[].class.getCanonicalName(), dubboParamDto.getTypes().get(0));
         Assert.assertArrayEquals(integerArray, (Object[]) dubboParamDto.getValues().get(0));
-        Assert.assertEquals(toArrayType(Number.class), dubboParamDto.getTypes().get(1));
+        Assert.assertEquals(Number[].class.getCanonicalName(), dubboParamDto.getTypes().get(1));
         Assert.assertArrayEquals(integerArray, (Object[]) dubboParamDto.getValues().get(1));
-        Assert.assertEquals(Integer[].class.getName(), dubboParamDto.getTypes().get(2));
+        Assert.assertEquals(Integer[].class.getCanonicalName(), dubboParamDto.getTypes().get(2));
         Assert.assertArrayEquals(integerArray, (Object[]) dubboParamDto.getValues().get(2));
     }
 
