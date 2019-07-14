@@ -55,8 +55,16 @@ public class YamlParamParser {
                 String typeName;
                 if (object instanceof Map) {
                     Map.Entry<String, Object> entry = ((Map<String, Object>) object).entrySet().iterator().next();
-                    value = entry.getValue();
                     typeName = entry.getKey();
+                    value = entry.getValue();
+                    // 如果值是Map，说明是自定义的Class，尝试对其转换成对应的Bean实例
+                    // 之所以这么做，是因为像dubbox这样的版本，如果仅仅是把Map值传递到服务端，
+                    // 如果对应的Bean私有字段没有setter方法，服务端并不会把值赋给字段（标准版的dubbo是可以的）
+                    // 而如果是在传递给服务端之前就把相应的实例生成好，并赋值好，再把实例传递过去，则不会有这样的问题
+                    // 但这要求使用时，要导入对应的jar包
+                    if (value instanceof Map) {
+                        value = YajadType.parseMapToBean((Map<String, Object>) value, typeName);
+                    }
                 } else {
                     typeName = value.getClass().getName();
                 }

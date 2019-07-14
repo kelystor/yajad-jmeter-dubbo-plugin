@@ -1,5 +1,7 @@
 package com.yajad.yaml.type;
 
+import com.yajad.jmeter.util.JsonUtils;
+
 import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.List;
@@ -92,5 +94,17 @@ public class YajadType {
         }
 
         return array;
+    }
+
+    public static Object parseMapToBean(Map<String, Object> map, String typeName) {
+        String className = normalizerBaseClassName(typeName);
+        Class<?> clazz = null;
+        try {
+            clazz = Class.forName(className);
+        } catch (ClassNotFoundException ignore) {
+            return map;
+        }
+
+        return JsonUtils.fromMap(map, clazz);
     }
 }

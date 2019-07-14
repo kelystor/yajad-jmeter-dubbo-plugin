@@ -1,0 +1,12 @@
+- com.yajad.dto.OrderParamDto:
+    id: '38'
+    price: 100
+    page:
+      page: 1
+      rows: 10
+      sort:
+        field: name
+        order: desc
+- com.yajad.dto.NotExistClass:
+    id: '38'
+    price: 100
