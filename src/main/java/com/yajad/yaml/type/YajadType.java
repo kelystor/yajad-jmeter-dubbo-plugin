@@ -20,6 +20,7 @@ public class YajadType {
         TYPE_ALIAS_MAP.put("float", Float.class.getName());
         TYPE_ALIAS_MAP.put("long", Long.class.getName());
         TYPE_ALIAS_MAP.put("byte", Byte.class.getName());
+        TYPE_ALIAS_MAP.put("bool", Boolean.class.getName());
         TYPE_ALIAS_MAP.put("boolean", Boolean.class.getName());
         TYPE_ALIAS_MAP.put("char", Character.class.getName());
         TYPE_ALIAS_MAP.put("List", List.class.getName());
