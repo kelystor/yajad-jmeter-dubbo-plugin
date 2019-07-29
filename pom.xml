@@ -6,7 +6,7 @@
 
     <groupId>com.yajad</groupId>
     <artifactId>jmeter-apache-dubbo-plugin</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <name>jmeter-apache-dubbo-plugin</name>
 
