@@ -6,6 +6,7 @@ import com.yajad.dubbo.config.RegistryConfig;
 import com.yajad.dubbo.invoker.DubboInvoker;
 import com.yajad.dubbo.invoker.DubboInvokerFactory;
 import com.yajad.jmeter.dto.DubboParamDto;
+import com.yajad.jmeter.parse.ParamParserException;
 import com.yajad.jmeter.parse.YamlParamParser;
 import com.yajad.jmeter.util.JsonUtils;
 import org.apache.jmeter.samplers.SampleResult;
@@ -52,7 +53,15 @@ public class DubboElement implements Serializable {
 
     @SuppressWarnings("deprecation")
     private void dubboInvoke(SampleResult sampleResult) {
-        DubboParamDto parameters = YamlParamParser.parseParameter(getServiceParameter());
+        DubboParamDto parameters;
+        try {
+            parameters = YamlParamParser.parseParameter(getServiceParameter());
+        } catch (ParamParserException e) {
+            sampleResult.setSuccessful(false);
+            sampleResult.setResponseData(JsonUtils.toJson(e), StandardCharsets.UTF_8.name());
+            return;
+        }
+
         String[] parameterTypes = parameters.getTypes().toArray(new String[]{});
         Object[] parameterValues = parameters.getValues().toArray();
 
