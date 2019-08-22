@@ -65,6 +65,9 @@ public class YamlParamParser {
                     value = YajadType.parseArrayObject((List<?>) value, typeName);
                 }
             } else {
+                if (value == null) {
+                    throw new ParamParserException("值为null时，必须指定参数类型");
+                }
                 typeName = value.getClass().getCanonicalName();
             }
             dubboParamTypes.add(YajadType.normalizerClassName(typeName));

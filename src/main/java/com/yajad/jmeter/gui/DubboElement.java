@@ -69,7 +69,7 @@ public class DubboElement implements Serializable {
         samplerData += "parameterTypes: " + Arrays.toString(parameterTypes) + "\n";
         samplerData += "parameterValues: " + Arrays.toString(parameterValues) + "\n";
         samplerData += "parameterClasses: " + Arrays.stream(parameterValues)
-                .map(value -> value.getClass().getName())
+                .map(value -> value != null ? value.getClass().getName() : "null")
                 .collect(Collectors.toList());
         sampleResult.setSamplerData(samplerData);
 
