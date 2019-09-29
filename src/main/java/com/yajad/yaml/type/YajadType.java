@@ -12,17 +12,17 @@ public class YajadType {
     private static final Map<String, String> TYPE_ALIAS_MAP = new HashMap<>();
 
     static {
-        TYPE_ALIAS_MAP.put("int", Integer.class.getName());
+        TYPE_ALIAS_MAP.put("int", "int");
+        TYPE_ALIAS_MAP.put("double", "double");
+        TYPE_ALIAS_MAP.put("short", "short");
+        TYPE_ALIAS_MAP.put("float", "float");
+        TYPE_ALIAS_MAP.put("long", "long");
+        TYPE_ALIAS_MAP.put("byte", "byte");
+        TYPE_ALIAS_MAP.put("bool", "boolean");
+        TYPE_ALIAS_MAP.put("boolean", "boolean");
+        TYPE_ALIAS_MAP.put("char", "char");
         TYPE_ALIAS_MAP.put("string", String.class.getName());
         TYPE_ALIAS_MAP.put("str", String.class.getName());
-        TYPE_ALIAS_MAP.put("double", Double.class.getName());
-        TYPE_ALIAS_MAP.put("short", Short.class.getName());
-        TYPE_ALIAS_MAP.put("float", Float.class.getName());
-        TYPE_ALIAS_MAP.put("long", Long.class.getName());
-        TYPE_ALIAS_MAP.put("byte", Byte.class.getName());
-        TYPE_ALIAS_MAP.put("bool", Boolean.class.getName());
-        TYPE_ALIAS_MAP.put("boolean", Boolean.class.getName());
-        TYPE_ALIAS_MAP.put("char", Character.class.getName());
         TYPE_ALIAS_MAP.put("List", List.class.getName());
         TYPE_ALIAS_MAP.put("list", List.class.getName());
         TYPE_ALIAS_MAP.put("Set", Set.class.getName());
@@ -32,10 +32,12 @@ public class YajadType {
     }
 
     /**
-     * 按别名方式写的，返回对应的基本类型（会保留数组类型）
-     * float -> java.lang.Float
+     * 按别名方式写的，返回对应的基本类型（会保留数组类型，原始类型原样返回）
+     * float -> float
+     * Float -> java.lang.Float
      * list -> java.util.List
-     * int[] -> java.lang.Integer[]
+     * int[] -> int[]
+     * Integer[] -> java.lang.Integer[]
      */
     public static String normalizerClassName(String typeName) {
         int index = typeName.indexOf("[]");
