@@ -293,6 +293,8 @@ string:
 
 第1个参数只写了类型值`1`，对应的隐式类型为`Integer`，第2个参数只写了类型值`test`，对应的隐式类型为`String`。正好可以对应`submit`方法的参数类型，因此这里可以省略`类型名`，只写`类型值`。
 
+如果参数是基本类型，则无法使用隐式类型。隐式类型只对应对象类型（基本类型的包装类型），如：`1`对应`Integer`，而不是基本类型`int`，如果要使用基本类型作为`类型名`，需要明确写明`类型名`。
+
 **注意：整数本身其实不完全对应`Integer`类型，而是会根据整数值的大小自动选择类型，如`Long`、`BigInteger`。**
 
 #### 值显式类型
@@ -315,23 +317,30 @@ string:
 
 缩写 | 对应的Java类型
 | :-- | :--
-int | Integer |
-string | String |
-str | String |
-double | Double |
-short | Short |
-float | Float |
-long | Long |
-byte | Byte |
-bool | Boolean |
-boolean | Boolean |
-char | Character |
+string | java.lang.String |
+str | java.lang.String |
 List | java.util.List |
 list | java.util.List |
 Set | java.util.Set |
 set | java.util.Set |
 Map | java.util.Map |
 map | java.util.Map |
+
+基本类型直接按基本类型的写法即可：
+
+基本类型 | 对应的Java类型
+| :-- | :--
+int | int |
+double | double |
+short | short |
+float | float |
+long | long |
+byte | byte |
+bool | boolean |
+boolean | boolean |
+char | char |
+
+如果是`java.lang`包下的类型，可以不写`java.lang`包名。如`Integer`就表示`java.lang.Integer`，`Long`、`Double`等类型也一样。
 
 在写参数时，可以使用这些缩写，如：
 
