@@ -39,7 +39,7 @@ public class OldDubboInvoker implements DubboInvoker {
         reference.setGeneric(referenceConfig.isGeneric());
         reference.setInterface(referenceConfig.getInterface());
 
-        ReferenceConfigCache cache = ReferenceConfigCache.getCache(referenceConfig.getRegistry().getAddress());
+        ReferenceConfigCache cache = ReferenceConfigCache.getCache(referenceConfig.getRegistry().getAddress(), com.alibaba.dubbo.config.ReferenceConfig::toString);
         genericService = cache.get(reference);
     }
 
