@@ -23,7 +23,7 @@
         <zkclient_version>0.2</zkclient_version>
         <curator_version>2.12.0</curator_version>
         <snakeyaml_version>1.0</snakeyaml_version>
-        <gson_version>2.8.2</gson_version>
+        <gson_version>2.8.9</gson_version>
     </properties>
 
     <dependencies>
