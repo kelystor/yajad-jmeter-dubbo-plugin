@@ -16,7 +16,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
 
-        <dubbo_version>2.6.4</dubbo_version>
+        <dubbo_version>2.6.12</dubbo_version>
         <apache_dubbo_version>2.7.1</apache_dubbo_version>
         <jmeter_core_version>5.0</jmeter_core_version>
         <zookeeper_version>3.4.14</zookeeper_version>
